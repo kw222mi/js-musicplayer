@@ -1,0 +1,38 @@
+html {
+    margin: 0;
+}
+
+body {
+    background-color: rgb(39, 38, 38);
+    color: lightgray;
+}
+
+#playlistholder {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+   
+}
+
+.album-icon {
+    width: 50px;
+}
+
+li {
+    text-decoration: none;
+    list-style: none;
+    border: .5px solid lightgray;
+    border-radius: 5px;
+    width: 500px;
+
+}
+
+.artist-text {
+
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+}
+
+.song-text {
+    font-size: 18px;
+}

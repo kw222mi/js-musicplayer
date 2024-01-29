@@ -1,9 +1,10 @@
 const musicArray = [
     {
-        artist: 'Boys, Girls, Toys & Wordds',
+        artist: 'Boys, Girls, Toys & Words',
         song:'Modern Pitch',
         album: 'Eye Of The Storm',
-        picture:'assets/Boys,_Girls,_Toys_&_Words_-_Modern_Pitch.jpg '
+        picture:'assets/Boys,_Girls,_Toys_&_Words_-_Modern_Pitch.jpg ',
+        play:'assets/Boys,_Girls,_Toys_&_Words_-_Modern_Pitch.mp3'
     },
 
     {
@@ -49,8 +50,10 @@ function renderPlaylist() {
 
   musicArray.forEach((music, index) => {
     let newListItem = createPlaylistItem(music, index);
-
+    newListItem.addEventListener('click', handleClick)
+    
     playlist.appendChild(newListItem);
+
   });
 }
 
@@ -59,23 +62,36 @@ function createPlaylistItem(music, index) {
   listItem.classList.add("playlist-item");
 
   listItem.innerHTML = `
-  <img src=${music.picture}>
-    <span>${music.artist}</span>
-    <span>${music.song}</span>
-    
+  <img src=${music.picture} class='album-icon'>
+    <span class='artist-text'>${music.artist}</span>
+    <span class='song-text'>${music.song}</span>
   `;
 
   return listItem;
 }
 
+
+function handleClick (event) {
+    console.log(event.target)
+    const playlist2 = document.getElementById("playlistholder");
+    let playsong = document.createElement('div')
+
+
+    playsong.innerHTML = `
+      <img src = ${musicArray[0].picture}>
+    <audio controls>
+      <source src=${musicArray[0].play}/>
+    </audio>
+    `;
+
+    playlist2.appendChild(playsong)
+}
+
 renderPlaylist();
 
-/*
 
-  <img src="assets/Say_Goodbye_-_VITNE.jpg">
-    <audio controls>
-      <source src="assets/Not_My_Problem_-_All_My_Friends_Hate_Me.mp3" type="audio/mpeg"/>
-    </audio>
 
-*/
+
+
+
 
