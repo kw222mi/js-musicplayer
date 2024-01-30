@@ -51,6 +51,7 @@ const musicArray = [
 
 const audioPlayer = document.getElementById("music-player");
 const playlist = document.getElementById("playlistholder");
+let currentSongIndex = 0;
 
 function renderPlaylist() {
   playlist.innerHTML = "";
@@ -79,6 +80,7 @@ function createPlaylistItem(music, index) {
 }
 
 function handleSongClick(index) {
+  currentSongIndex = index;
   const currentSong = musicArray[index];
   renderAudioPlayer(currentSong);
 }
@@ -93,12 +95,16 @@ function renderAudioPlayer(currentSong) {
           Din webbläsare stödjer inte ljudet.
         </audio>
         <button id='playbtn'>Play</button>
+        <button id='nextbtn'>Next</button>
+        <button id='prevbtn'>Prev</button>
         <div id="progress-container">
           <input type="range" id="progress-bar" value="0">
         </div>
       `;
 
   const playButton = document.getElementById("playbtn");
+  const nextButton = document.getElementById("nextbtn")
+  const prevButton = document.getElementById("prevbtn");
   const audio = document.getElementById("audio");
   const progressBar = document.getElementById("progress-bar");
 
@@ -110,6 +116,20 @@ function renderAudioPlayer(currentSong) {
       audio.pause();
       playButton.textContent = "Play";
     }
+  });
+
+  nextButton.addEventListener("click", () => {
+     currentSongIndex = (currentSongIndex + 1) % musicArray.length;
+     const nextSong = musicArray[currentSongIndex];
+     renderAudioPlayer(nextSong);
+
+  })
+
+  prevButton.addEventListener("click", () => {
+    currentSongIndex = (currentSongIndex - 1 + musicArray.length) % musicArray.length;
+    const prevSong = musicArray[currentSongIndex];
+    renderAudioPlayer(prevSong);
+    
   });
 
   audio.addEventListener("timeupdate", () => {
@@ -127,6 +147,8 @@ function renderAudioPlayer(currentSong) {
     // You can implement logic for automatically playing the next song
     // based on your requirements.
   });
+
+  // next song, previous song, loop playlist, shuffle playlist
 }
 
 
