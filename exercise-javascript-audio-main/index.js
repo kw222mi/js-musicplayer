@@ -53,6 +53,7 @@ const audioPlayer = document.getElementById("music-player");
 const playlist = document.getElementById("playlistholder");
 let currentSongIndex = 0;
 let isShuffleMode = false;
+let currentSong = musicArray[currentSongIndex]
 
 function renderPlaylist() {
   playlist.innerHTML = "";
@@ -76,9 +77,13 @@ function createPlaylistItem(music, index) {
   listItem.setAttribute("data-index", index);
 
   listItem.innerHTML = `
+        <div class='listitem'>
         <img src=${music.picture} class='album-icon'>
+        <div class='music-info-div'>
         <span class='artist-text'>${music.artist}</span>
         <span class='song-text'>${music.song}</span>
+        </div>
+        </div>
       `;
 
   listItem.addEventListener("click", () => {
@@ -91,21 +96,39 @@ function createPlaylistItem(music, index) {
 function handleSongClick(index) {
   currentSongIndex = index;
   const currentSong = musicArray[index];
-  renderAudioPlayer(currentSong);
+   renderAudioPlayer(currentSong);
 }
 
 
 function renderAudioPlayer(currentSong) {
+    // If any player added remove it and the eventlisteners
+     if (audioPlayer.hasChildNodes()) {
+       audioPlayer.removeChild(audioPlayer.firstChild);
+     }
+
   audioPlayer.innerHTML = `
-        <img src=${currentSong.picture}>
+        <div class='player-img-div'>
+        <img class='player-img' src=${currentSong.picture}>
+        </div>
+
+        <div>
+        <span>${currentSong.artist}</span>
+        <span>${currentSong.song}</span>
         <audio id="audio">
           <source src=${currentSong.play} type="audio/mp3">
           Din webbläsare stödjer inte ljudet.
         </audio>
-        <button id='playbtn'>Play</button>
-        <button id='nextbtn'>Next</button>
-        <button id='prevbtn'>Prev</button>
-        <button id='shufflebtn'>Shuffle</button>
+        </div>
+
+        <div class='button-container'>
+        <button class='button' id='prevbtn'><span class="material-symbols-outlined">arrow_back_ios</span></button>
+        <button class='button' id='playbtn'><span class="material-symbols-outlined">play_arrow</span></button>
+        <button class='button' id='nextbtn'><span class="material-symbols-outlined">arrow_forward_ios</span></button>
+         </div>
+         
+        <button class='button' id='shufflebtn'><span class="material-symbols-outlined">shuffle</span></button>
+        <button class='button' id='loopbtn'><span class="material-symbols-outlined">repeat</span></button>
+       
         <div id="volume-container">
 
         <label for="volume-slider">Volym:</label>
@@ -116,6 +139,7 @@ function renderAudioPlayer(currentSong) {
           <input type="range" id="progress-bar" value="0">
         </div>
       `;
+    
 
   const playButton = document.getElementById("playbtn");
   const nextButton = document.getElementById("nextbtn");
@@ -130,7 +154,6 @@ function renderAudioPlayer(currentSong) {
     const volumeValue = parseFloat(volumeSlider.value);
     audio.volume = volumeValue;
   });
-
 
   playButton.addEventListener("click", () => {
     if (audio.paused) {
@@ -188,6 +211,7 @@ function renderAudioPlayer(currentSong) {
   });
 
 }
-
+ // By clicking on a song that is being played, that song should be paused and the UI should reflect that.
+ // fix loop button
 
 renderPlaylist();

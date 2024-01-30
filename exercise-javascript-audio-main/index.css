@@ -1,9 +1,11 @@
 
 * {
     box-sizing: border-box;
+    margin: 0;
 }
 html {
-    margin: 0;
+    margin: auto;
+    width: 500px;
 }
 
 body {
@@ -14,29 +16,62 @@ body {
 #playlistholder {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-   
+    gap: 3px;
 }
 
 .album-icon {
     width: 50px;
 }
 
+h1 {
+    font-family: 'Raleway', serif;
+    margin-bottom: 70px;
+}
+
 li {
     text-decoration: none;
     list-style: none;
-    border: .5px solid lightgray;
-    border-radius: 5px;
-    width: 500px;
+    border-bottom: .5px solid lightgray;
+    width: 400px;
+    margin-bottom: 10px;
+}
 
+.listitem {
+    display: flex;
+    flex-direction: row;
+    gap:7px;
+    cursor: pointer;
+}
+
+.player-img-div {
+    
+}
+
+.button-container {
+    width: 400px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.button {
+    background-color: darksalmon;
+    color:rgb(39, 38, 38);
+    font-family: 'Raleway', serif;
+    font-size: 16px;
+}
+
+.music-info-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .artist-text {
-
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: 20px;
+    font-family: 'Raleway', serif;
+    font-size: 16px;
 }
 
 .song-text {
-    font-size: 18px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 12px;
 }
