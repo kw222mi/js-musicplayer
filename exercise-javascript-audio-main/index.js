@@ -52,14 +52,23 @@ const musicArray = [
 const audioPlayer = document.getElementById("music-player");
 const playlist = document.getElementById("playlistholder");
 let currentSongIndex = 0;
+let isShuffleMode = false;
 
 function renderPlaylist() {
   playlist.innerHTML = "";
   musicArray.forEach((music, index) => {
     let newListItem = createPlaylistItem(music, index);
     playlist.appendChild(newListItem);
+
+    // Update UI to mark shuffle
+    if (isShuffleMode) {
+      newListItem.classList.add("shuffle-mode");
+    } else {
+      newListItem.classList.remove("shuffle-mode");
+    }
   });
 }
+
 
 function createPlaylistItem(music, index) {
   let listItem = document.createElement("li");
@@ -86,27 +95,42 @@ function handleSongClick(index) {
 }
 
 
-
 function renderAudioPlayer(currentSong) {
   audioPlayer.innerHTML = `
         <img src=${currentSong.picture}>
-        <audio id="audio" controls>
+        <audio id="audio">
           <source src=${currentSong.play} type="audio/mp3">
           Din webbläsare stödjer inte ljudet.
         </audio>
         <button id='playbtn'>Play</button>
         <button id='nextbtn'>Next</button>
         <button id='prevbtn'>Prev</button>
+        <button id='shufflebtn'>Shuffle</button>
+        <div id="volume-container">
+
+        <label for="volume-slider">Volym:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
+        </div>
+
         <div id="progress-container">
           <input type="range" id="progress-bar" value="0">
         </div>
       `;
 
   const playButton = document.getElementById("playbtn");
-  const nextButton = document.getElementById("nextbtn")
+  const nextButton = document.getElementById("nextbtn");
   const prevButton = document.getElementById("prevbtn");
+  const shuffleButton = document.getElementById("shufflebtn");
   const audio = document.getElementById("audio");
   const progressBar = document.getElementById("progress-bar");
+  const volumeSlider = document.getElementById("volume-slider");
+  
+
+  volumeSlider.addEventListener("input", () => {
+    const volumeValue = parseFloat(volumeSlider.value);
+    audio.volume = volumeValue;
+  });
+
 
   playButton.addEventListener("click", () => {
     if (audio.paused) {
@@ -122,15 +146,29 @@ function renderAudioPlayer(currentSong) {
      currentSongIndex = (currentSongIndex + 1) % musicArray.length;
      const nextSong = musicArray[currentSongIndex];
      renderAudioPlayer(nextSong);
-
   })
 
   prevButton.addEventListener("click", () => {
     currentSongIndex = (currentSongIndex - 1 + musicArray.length) % musicArray.length;
     const prevSong = musicArray[currentSongIndex];
     renderAudioPlayer(prevSong);
-    
   });
+
+  shuffleButton.addEventListener("click", () => {
+   isShuffleMode = !isShuffleMode; 
+   if (isShuffleMode) {
+     // If shuffle, randomise the playlist and update UI
+     shufflePlaylist();
+     renderPlaylist();
+   }
+  });
+
+  function shufflePlaylist() {
+    for (let i = musicArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [musicArray[i], musicArray[j]] = [musicArray[j], musicArray[i]];
+    }
+  }
 
   audio.addEventListener("timeupdate", () => {
     const progress = (audio.currentTime / audio.duration) * 100;
@@ -143,12 +181,12 @@ function renderAudioPlayer(currentSong) {
   });
 
   audio.addEventListener("ended", () => {
-    // Handle song ending here
-    // You can implement logic for automatically playing the next song
-    // based on your requirements.
+    currentSongIndex = (currentSongIndex + 1) % musicArray.length;
+    // if currentSongIndex = 0 && loop
+    const nextSong = musicArray[currentSongIndex];
+    renderAudioPlayer(nextSong);
   });
 
-  // next song, previous song, loop playlist, shuffle playlist
 }
 
 
