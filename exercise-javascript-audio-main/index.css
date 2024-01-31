@@ -13,6 +13,8 @@ body {
     color: lightgray;
 }
 
+
+/*-----------------------------Playlist ----------------------*/
 #playlistholder {
     display: flex;
     flex-direction: column;
@@ -43,21 +45,36 @@ li {
     cursor: pointer;
 }
 
+
+/*--------------------------Player-------------------*/
+
 .player-img-div {
     
 }
 
+#progress-container,
+#volume-container {
+    margin: 10px 50px 10px 50px;
+}
+
+
+
 .button-container {
-    width: 400px;
+    width: 300px;
     display: flex;
     justify-content: space-around;
+    margin-top: 10px;
 }
 
 .button {
-    background-color: darksalmon;
-    color:rgb(39, 38, 38);
+    background-color: #053a5f;
+    color: lightgray;
     font-family: 'Raleway', serif;
     font-size: 16px;
+    border: 1px solid black;
+    border-radius: 50px;
+    padding: 10px;
+   
 }
 
 .music-info-div {
@@ -74,4 +91,76 @@ li {
 .song-text {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 12px;
+}
+
+
+
+
+/*---------------------- Range Input Styles -------------------*/
+/*Range Reset*/
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 15rem;
+}
+
+/* Removes default focus */
+input[type="range"]:focus {
+    outline: none;
+}
+
+/***** Chrome, Safari, Opera and Edge Chromium styles *****/
+/* slider track */
+input[type="range"]::-webkit-slider-runnable-track {
+    background-color: #053a5f;
+    border-radius: 0.5rem;
+    height: 0.3rem;
+}
+
+/* slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* Override default look */
+    appearance: none;
+    margin-top: -12px;
+    /* Centers thumb on the track */
+
+    /*custom styles*/
+    background-color: lightgray;
+    height: 1rem;
+    width: .5rem;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+    border: 1px solid #053a5f;
+    outline: 3px solid #053a5f;
+    outline-offset: 0.125rem;
+}
+
+/******** Firefox styles ********/
+/* slider track */
+input[type="range"]::-moz-range-track {
+    background-color: #053a5f;
+    border-radius: 0.5rem;
+    height: 0.3rem;
+}
+
+/* slider thumb */
+input[type="range"]::-moz-range-thumb {
+    border: none;
+    /*Removes extra border that FF applies*/
+    border-radius: 0;
+    /*Removes default border-radius that FF applies*/
+
+    /*custom styles*/
+    background-color: lightgray;
+    height: 1rem;
+    width: .5rem;
+}
+input[type="range"]:focus::-moz-range-thumb {
+    border: 1px solid #053a5f;
+    outline: 3px solid #053a5f;
+    outline-offset: 0.125rem;
 }

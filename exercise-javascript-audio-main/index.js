@@ -111,32 +111,35 @@ function renderAudioPlayer(currentSong) {
         <img class='player-img' src=${currentSong.picture}>
         </div>
 
-        <div>
-        <span>${currentSong.artist}</span>
-        <span>${currentSong.song}</span>
-        <audio id="audio">
-          <source src=${currentSong.play} type="audio/mp3">
-          Din webbläsare stödjer inte ljudet.
-        </audio>
-        </div>
-
-        <div class='button-container'>
-        <button class='button' id='prevbtn'><span class="material-symbols-outlined">arrow_back_ios</span></button>
-        <button class='button' id='playbtn'><span class="material-symbols-outlined">play_arrow</span></button>
-        <button class='button' id='nextbtn'><span class="material-symbols-outlined">arrow_forward_ios</span></button>
-         </div>
-         
-        <button class='button' id='shufflebtn'><span class="material-symbols-outlined">shuffle</span></button>
-        <button class='button' id='loopbtn'><span class="material-symbols-outlined">repeat</span></button>
-       
-        <div id="volume-container">
-
-        <label for="volume-slider">Volym:</label>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
+        <div class='music-info-div'>
+            <span class='artist-text'>${currentSong.artist}</span>
+            <span class='song-text'>${currentSong.song}</span>
+            <audio id="audio">
+                <source src=${currentSong.play} type="audio/mp3">
+                Din webbläsare stödjer inte ljudet.
+            </audio>
         </div>
 
         <div id="progress-container">
           <input type="range" id="progress-bar" value="0">
+        </div>
+
+        <div class='button-container'>
+         <button class='button' id='shufflebtn'><span class="material-symbols-outlined">shuffle</span></button>
+            <button class='button' id='prevbtn'><span class="material-symbols-outlined">arrow_back_ios</span></button>
+            <button class='button' id='playbtn'><span class="material-symbols-outlined">play_arrow</span></button>
+            <button class='button' id='nextbtn'><span class="material-symbols-outlined">arrow_forward_ios</span></button>
+             <button class='button' id='loopbtn'><span class="material-symbols-outlined">repeat</span></button>
+        </div>
+
+        <div class='button-container'>
+           
+           
+        </div>
+
+        <div id="volume-container">
+            <label for="volume-slider"><span class="material-symbols-outlined">volume_down</span></label>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
         </div>
       `;
     
@@ -158,10 +161,10 @@ function renderAudioPlayer(currentSong) {
   playButton.addEventListener("click", () => {
     if (audio.paused) {
       audio.play();
-      playButton.textContent = "Pause";
+      playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
     } else {
       audio.pause();
-      playButton.textContent = "Play";
+      playButton.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
     }
   });
 
