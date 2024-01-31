@@ -94,10 +94,19 @@ function createPlaylistItem(music, index) {
 }
 
 function handleSongClick(index) {
-  currentSongIndex = index;
-  const currentSong = musicArray[index];
-   renderAudioPlayer(currentSong);
+  const audio = document.getElementById("audio");
+
+  if ( !audio || audio.paused) {
+    currentSongIndex = index;
+    const currentSong = musicArray[index];
+    renderAudioPlayer(currentSong);
+  } else {
+    audio.pause();
+    const pbtn = document.getElementById("playbtn");
+    pbtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+  }
 }
+
 
 
 function renderAudioPlayer(currentSong) {
