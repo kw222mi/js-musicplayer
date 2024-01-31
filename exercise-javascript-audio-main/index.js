@@ -126,7 +126,7 @@ function renderAudioPlayer(currentSong) {
         <div class='music-info-div'>
             <span class='artist-text'>${currentSong.artist}</span>
             <span class='song-text'>${currentSong.song}</span>
-            <audio id="audio">
+            <audio id="audio" autoplay>
                 <source src=${currentSong.play} type="audio/mp3">
                 Din webbläsare stödjer inte ljudet.
             </audio>
@@ -139,14 +139,9 @@ function renderAudioPlayer(currentSong) {
         <div class='button-container'>
          <button class='button' id='shufflebtn'><span class="material-symbols-outlined">shuffle</span></button>
             <button class='button' id='prevbtn'><span class="material-symbols-outlined">arrow_back_ios</span></button>
-            <button class='button' id='playbtn'><span class="material-symbols-outlined">play_arrow</span></button>
+            <button class='button' id='playbtn'><span class="material-symbols-outlined">pause</span></button>
             <button class='button' id='nextbtn'><span class="material-symbols-outlined">arrow_forward_ios</span></button>
              <button class='button' id='loopbtn'><span class="material-symbols-outlined">repeat</span></button>
-        </div>
-
-        <div class='button-container'>
-           
-           
         </div>
 
         <div id="volume-container">
@@ -164,6 +159,10 @@ function renderAudioPlayer(currentSong) {
   const progressBar = document.getElementById("progress-bar");
   const volumeSlider = document.getElementById("volume-slider");
   const loopButton = document.getElementById("loopbtn");
+
+  // Put the volume down
+  audio.volume = 0.1;
+  volumeSlider.value = audio.volume;
 
   loopButton.addEventListener("click", () => {
     isLoopMode = !isLoopMode;
