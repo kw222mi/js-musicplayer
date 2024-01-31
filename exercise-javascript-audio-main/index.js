@@ -54,6 +54,9 @@ const playlist = document.getElementById("playlistholder");
 let currentSongIndex = 0;
 let isShuffleMode = false;
 let currentSong = musicArray[currentSongIndex]
+let isLoopMode = false;
+let playlistRestarted = false;
+
 
 function renderPlaylist() {
   playlist.innerHTML = "";
@@ -160,6 +163,12 @@ function renderAudioPlayer(currentSong) {
   const audio = document.getElementById("audio");
   const progressBar = document.getElementById("progress-bar");
   const volumeSlider = document.getElementById("volume-slider");
+  const loopButton = document.getElementById("loopbtn");
+
+  loopButton.addEventListener("click", () => {
+    isLoopMode = !isLoopMode;
+    loopButton.classList.toggle("active", isLoopMode);
+  });
   
 
   volumeSlider.addEventListener("input", () => {
@@ -216,14 +225,20 @@ function renderAudioPlayer(currentSong) {
   });
 
   audio.addEventListener("ended", () => {
-    currentSongIndex = (currentSongIndex + 1) % musicArray.length;
-    // if currentSongIndex = 0 && loop
-    const nextSong = musicArray[currentSongIndex];
-    renderAudioPlayer(nextSong);
-  });
+  currentSongIndex = (currentSongIndex + 1) % musicArray.length;
 
+  if (currentSongIndex === 0 && isLoopMode) {
+    // Restart the playlist
+    if (!playlistRestarted) {
+      playlistRestarted = true;
+      renderPlaylist();
+    }
+  } else {
+    playlistRestarted = false;
+  }
+  const nextSong = musicArray[currentSongIndex];
+  renderAudioPlayer(nextSong);
+});
 }
- // By clicking on a song that is being played, that song should be paused and the UI should reflect that.
- // fix loop button
 
 renderPlaylist();

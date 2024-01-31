@@ -74,7 +74,19 @@ li {
     border: 1px solid rgb(39, 38, 38);
     border-radius: 50px;
     padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.5s, color 0.5s;
    
+}
+/* Klickeffekt */
+.button:active {
+    background-color: #4e86ac;
+  
+}
+
+#loopbtn.active {
+  background-color: #4e86ac; 
+  color: #fff;
 }
 
 .music-info-div {
