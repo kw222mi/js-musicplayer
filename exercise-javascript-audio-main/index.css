@@ -78,10 +78,9 @@ li {
     transition: background-color 0.5s, color 0.5s;
    
 }
-/* Klickeffekt */
+
 .button:active {
     background-color: #4e86ac;
-  
 }
 
 #loopbtn.active {

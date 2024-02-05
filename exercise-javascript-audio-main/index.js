@@ -48,16 +48,81 @@ const musicArray = [
   },
 ];
 
-
 const audioPlayer = document.getElementById("music-player");
 const playlist = document.getElementById("playlistholder");
 let currentSongIndex = 0;
 let isShuffleMode = false;
-let currentSong = musicArray[currentSongIndex]
+let currentSong = musicArray[currentSongIndex];
 let isLoopMode = false;
 let playlistRestarted = false;
 
+const playButton = document.getElementById("playbtn");
+const nextButton = document.getElementById("nextbtn");
+const prevButton = document.getElementById("prevbtn");
+const shuffleButton = document.getElementById("shufflebtn");
 
+const progressBar = document.getElementById("progress-bar");
+const volumeSlider = document.getElementById("volume-slider");
+const loopButton = document.getElementById("loopbtn");
+
+let currentPlaybackPosition = 0;
+
+/*------- Event listeners ---------*/
+loopButton.addEventListener("click", () => {
+  isLoopMode = !isLoopMode;
+  loopButton.classList.toggle("active", isLoopMode);
+});
+
+volumeSlider.addEventListener("input", () => {
+  const volumeValue = parseFloat(volumeSlider.value);
+  audio.volume = volumeValue;
+});
+
+playButton.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play();
+    playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
+  } else {
+    audio.pause();
+    playButton.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+  }
+});
+
+nextButton.addEventListener("click", () => {
+  currentSongIndex = (currentSongIndex + 1) % musicArray.length;
+  const nextSong = musicArray[currentSongIndex];
+  renderAudioPlayer(nextSong);
+});
+
+prevButton.addEventListener("click", () => {
+  currentSongIndex =
+    (currentSongIndex - 1 + musicArray.length) % musicArray.length;
+  const prevSong = musicArray[currentSongIndex];
+  renderAudioPlayer(prevSong);
+});
+
+shuffleButton.addEventListener("click", () => {
+  isShuffleMode = !isShuffleMode;
+  if (isShuffleMode) {
+    // If shuffle, randomise the playlist and update UI
+    shufflePlaylist();
+    renderPlaylist();
+  }
+});
+
+function shufflePlaylist() {
+  for (let i = musicArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [musicArray[i], musicArray[j]] = [musicArray[j], musicArray[i]];
+  }
+}
+
+progressBar.addEventListener("input", () => {
+  const seekTime = (progressBar.value / 100) * audio.duration;
+  audio.currentTime = seekTime;
+});
+
+/*---------- Functions ----------*/
 function renderPlaylist() {
   playlist.innerHTML = "";
   musicArray.forEach((music, index) => {
@@ -72,7 +137,6 @@ function renderPlaylist() {
     }
   });
 }
-
 
 function createPlaylistItem(music, index) {
   let listItem = document.createElement("li");
@@ -96,148 +160,107 @@ function createPlaylistItem(music, index) {
   return listItem;
 }
 
+
 function handleSongClick(index) {
   const audio = document.getElementById("audio");
 
-  if ( !audio || audio.paused) {
+  if (!audio || audio.paused) {
+    // Om ljudet är pausat eller det finns ingen aktuell låt
     currentSongIndex = index;
     const currentSong = musicArray[index];
     renderAudioPlayer(currentSong);
+    audio.play(); // Starta ljudet efter att det har renderats
   } else {
-    audio.pause();
-    const pbtn = document.getElementById("playbtn");
-    pbtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+    if (currentSongIndex === index) {
+      if (audio.currentTime === 0) {
+        // Om ljudet är i början, starta ljudet
+        audio.play();
+        playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
+      } else {
+        // Annars, pausa ljudet och spara uppspelningspositionen
+        currentPlaybackPosition = audio.currentTime;
+        audio.pause();
+        playButton.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+      }
+    } else {
+      // Om en annan låt klickas medan en låt spelas, byt låt
+      audio.pause();
+      const pbtn = document.getElementById("playbtn");
+      pbtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+
+      currentSongIndex = index;
+      const newSong = musicArray[currentSongIndex];
+      renderAudioPlayer(newSong);
+
+      // Återställ uppspelningspositionen om den inte är i början
+      if (currentPlaybackPosition !== 0) {
+        audio.currentTime = currentPlaybackPosition;
+      }
+      audio.play();
+    }
   }
 }
 
 
+function resumePlayback() {
+  const audio = document.getElementById("audio");
+  if (isResumingPlayback) {
+    audio.play();
+    isResumingPlayback = false;
+  }
+  // Ta bort evenemangshanterare för att undvika flera upprepade återupptagningar
+  audio.removeEventListener("canplay", resumePlayback);
+}
 
 function renderAudioPlayer(currentSong) {
-    // If any player added remove it and the eventlisteners
-     if (audioPlayer.hasChildNodes()) {
-       audioPlayer.removeChild(audioPlayer.firstChild);
-     }
+  let musicInfo = document.getElementById("music-playing-div");
+  musicInfo.innerHTML = "";
 
-  audioPlayer.innerHTML = `
+  // Clear the eventlisteners
+
+  musicInfo.innerHTML = `
         <div class='player-img-div'>
-        <img class='player-img' src=${currentSong.picture}>
-        </div>
-
-        <div class='music-info-div'>
-            <span class='artist-text'>${currentSong.artist}</span>
-            <span class='song-text'>${currentSong.song}</span>
-            <audio id="audio" autoplay>
-                <source src=${currentSong.play} type="audio/mp3">
-                Din webbläsare stödjer inte ljudet.
-            </audio>
-        </div>
-
-        <div id="progress-container">
-          <input type="range" id="progress-bar" value="0">
-        </div>
-
-        <div class='button-container'>
-         <button class='button' id='shufflebtn'><span class="material-symbols-outlined">shuffle</span></button>
-            <button class='button' id='prevbtn'><span class="material-symbols-outlined">arrow_back_ios</span></button>
-            <button class='button' id='playbtn'><span class="material-symbols-outlined">pause</span></button>
-            <button class='button' id='nextbtn'><span class="material-symbols-outlined">arrow_forward_ios</span></button>
-             <button class='button' id='loopbtn'><span class="material-symbols-outlined">repeat</span></button>
-        </div>
-
-        <div id="volume-container">
-            <label for="volume-slider"><span class="material-symbols-outlined">volume_down</span></label>
-            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
-        </div>
-      `;
+      <img class='player-img' src=${currentSong.picture}>
+    </div>
     
+    <div class='music-info-div'>
+      <span class='artist-text'>${currentSong.artist}</span>
+      <span class='song-text'>${currentSong.song}</span>
+      <audio id="audio" autoplay>
+        <source src=${currentSong.play} type="audio/mp3">
+        Din webbläsare stödjer inte ljudet.
+      </audio>
+    </div>
+      `;
 
-  const playButton = document.getElementById("playbtn");
-  const nextButton = document.getElementById("nextbtn");
-  const prevButton = document.getElementById("prevbtn");
-  const shuffleButton = document.getElementById("shufflebtn");
+  playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`; // Uppdatera playButton korrekt
+
   const audio = document.getElementById("audio");
-  const progressBar = document.getElementById("progress-bar");
-  const volumeSlider = document.getElementById("volume-slider");
-  const loopButton = document.getElementById("loopbtn");
 
   // Put the volume down
   audio.volume = 0.1;
   volumeSlider.value = audio.volume;
-
-  loopButton.addEventListener("click", () => {
-    isLoopMode = !isLoopMode;
-    loopButton.classList.toggle("active", isLoopMode);
-  });
-  
-
-  volumeSlider.addEventListener("input", () => {
-    const volumeValue = parseFloat(volumeSlider.value);
-    audio.volume = volumeValue;
-  });
-
-  playButton.addEventListener("click", () => {
-    if (audio.paused) {
-      audio.play();
-      playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
-    } else {
-      audio.pause();
-      playButton.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-    }
-  });
-
-  nextButton.addEventListener("click", () => {
-     currentSongIndex = (currentSongIndex + 1) % musicArray.length;
-     const nextSong = musicArray[currentSongIndex];
-     renderAudioPlayer(nextSong);
-  })
-
-  prevButton.addEventListener("click", () => {
-    currentSongIndex = (currentSongIndex - 1 + musicArray.length) % musicArray.length;
-    const prevSong = musicArray[currentSongIndex];
-    renderAudioPlayer(prevSong);
-  });
-
-  shuffleButton.addEventListener("click", () => {
-   isShuffleMode = !isShuffleMode; 
-   if (isShuffleMode) {
-     // If shuffle, randomise the playlist and update UI
-     shufflePlaylist();
-     renderPlaylist();
-   }
-  });
-
-  function shufflePlaylist() {
-    for (let i = musicArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [musicArray[i], musicArray[j]] = [musicArray[j], musicArray[i]];
-    }
-  }
 
   audio.addEventListener("timeupdate", () => {
     const progress = (audio.currentTime / audio.duration) * 100;
     progressBar.value = progress;
   });
 
-  progressBar.addEventListener("input", () => {
-    const seekTime = (progressBar.value / 100) * audio.duration;
-    audio.currentTime = seekTime;
-  });
-
   audio.addEventListener("ended", () => {
-  currentSongIndex = (currentSongIndex + 1) % musicArray.length;
+    currentSongIndex = (currentSongIndex + 1) % musicArray.length;
 
-  if (currentSongIndex === 0 && isLoopMode) {
-    // Restart the playlist
-    if (!playlistRestarted) {
-      playlistRestarted = true;
-      renderPlaylist();
+    if (currentSongIndex === 0 && isLoopMode) {
+      // Restart the playlist
+      if (!playlistRestarted) {
+        playlistRestarted = true;
+        renderPlaylist();
+      }
+    } else {
+      playlistRestarted = false;
     }
-  } else {
-    playlistRestarted = false;
-  }
-  const nextSong = musicArray[currentSongIndex];
-  renderAudioPlayer(nextSong);
-});
+    const nextSong = musicArray[currentSongIndex];
+    renderAudioPlayer(nextSong);
+  });
 }
 
 renderPlaylist();
