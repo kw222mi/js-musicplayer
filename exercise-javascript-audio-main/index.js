@@ -160,56 +160,41 @@ function createPlaylistItem(music, index) {
   return listItem;
 }
 
-
 function handleSongClick(index) {
   const audio = document.getElementById("audio");
+  console.log(audio);
 
-  if (!audio || audio.paused) {
-    // Om ljudet är pausat eller det finns ingen aktuell låt
+  if (!audio) {
+    // if there is no song, load and play the song
     currentSongIndex = index;
     const currentSong = musicArray[index];
     renderAudioPlayer(currentSong);
-    audio.play(); // Starta ljudet efter att det har renderats
-  } else {
-    if (currentSongIndex === index) {
-      if (audio.currentTime === 0) {
-        // Om ljudet är i början, starta ljudet
-        audio.play();
-        playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
-      } else {
-        // Annars, pausa ljudet och spara uppspelningspositionen
-        currentPlaybackPosition = audio.currentTime;
-        audio.pause();
-        playButton.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-      }
-    } else {
-      // Om en annan låt klickas medan en låt spelas, byt låt
-      audio.pause();
-      const pbtn = document.getElementById("playbtn");
-      pbtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-
-      currentSongIndex = index;
-      const newSong = musicArray[currentSongIndex];
-      renderAudioPlayer(newSong);
-
-      // Återställ uppspelningspositionen om den inte är i början
-      if (currentPlaybackPosition !== 0) {
-        audio.currentTime = currentPlaybackPosition;
-      }
-      audio.play();
-    }
-  }
-}
-
-
-function resumePlayback() {
-  const audio = document.getElementById("audio");
-  if (isResumingPlayback) {
     audio.play();
-    isResumingPlayback = false;
+  } else if (currentSongIndex === index) {
+    console.log(audio.currentTime);
+
+    if (audio.currentTime === 0) {
+      // If the song is at 0 start the song
+      audio.play();
+      playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
+    } else if (audio.paused) {
+      // If the song is paused -> play
+      audio.play();
+      playButton.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
+    } else {
+      // If the song is playing -> pause
+      audio.pause();
+      playButton.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+    }
+  } else {
+    // If another song is clicked, change song
+    audio.pause();
+    const pbtn = document.getElementById("playbtn");
+    pbtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+    currentSongIndex = index;
+    const newSong = musicArray[currentSongIndex];
+    renderAudioPlayer(newSong);
   }
-  // Ta bort evenemangshanterare för att undvika flera upprepade återupptagningar
-  audio.removeEventListener("canplay", resumePlayback);
 }
 
 function renderAudioPlayer(currentSong) {
